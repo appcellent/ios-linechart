@@ -99,6 +99,7 @@
     
     self.drawsDataPoints = YES;
     self.drawsDataLines  = YES;
+    self.smoothXAxisOnly = YES;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -250,13 +251,25 @@
                     CGFloat y = yStart + round((1.0 - (datItem.y - self.yMin) / yRangeLen) * availableHeight);
                     CGFloat xDiff = x - prevX;
                     CGFloat yDiff = y - prevY;
-                    
+
                     if(xDiff != 0) {
-                        CGFloat xSmoothing = self.smoothPlot ? MIN(30,xDiff) : 0;
-                        CGFloat ySmoothing = 0.5;
-                        CGFloat slope = yDiff / xDiff;
-                        CGPoint controlPt1 = CGPointMake(prevX + xSmoothing, prevY + ySmoothing * slope * xSmoothing);
-                        CGPoint controlPt2 = CGPointMake(x - xSmoothing, y - ySmoothing * slope * xSmoothing);
+                        CGPoint controlPt1; CGPoint controlPt2;
+
+                        if (self.smoothXAxisOnly) {
+                            // limit the smoothing to the x-axis only
+                            CGFloat strength = 0.5f;
+                            controlPt1 = CGPointMake(prevX + (strength * xDiff), prevY);
+                            controlPt2 = CGPointMake(x - (strength * xDiff), y);
+                        }
+                        else {
+                            // the original smoothing.
+                            CGFloat xSmoothing = self.smoothPlot ? MIN(30,xDiff) : 0;
+                            CGFloat ySmoothing = 0.5;
+                            CGFloat slope = yDiff / xDiff;
+                            controlPt1 = CGPointMake(prevX + xSmoothing, prevY + ySmoothing * slope * xSmoothing);
+                            controlPt2 = CGPointMake(x - xSmoothing, y - ySmoothing * slope * xSmoothing);
+                        }
+
                         CGPathAddCurveToPoint(path, NULL, controlPt1.x, controlPt1.y, controlPt2.x, controlPt2.y, x, y);
                     }
                     else {
