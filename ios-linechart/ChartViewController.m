@@ -96,6 +96,8 @@
     _chartViewUpper.yMax = 6;
     _chartViewUpper.ySteps = @[@"1.0",@"2.0",@"3.0",@"4.0",@"5.0",@"A big label at 6.0"];
     _chartViewUpper.data = @[d1x,d2x];
+	
+	_chartViewUpper.fillPlot = YES;
 
 //    chartView.drawsDataPoints = NO; // Uncomment to turn off circles at data points.
 //    chartView.drawsDataLines = NO; // Uncomment to turn off lines connecting data points.
