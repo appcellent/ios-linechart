@@ -26,7 +26,19 @@
         self.formatter = [[NSDateFormatter alloc] init];
         [self.formatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:@"yyyyMMMd" options:0 locale:[NSLocale currentLocale]]];
     }
-    
+	
+	
+	// Set custom appearance
+	[[LCInfoView appearance] setCornerRadius:2.0f];
+	[[LCInfoView appearance] setShowGloss:@(NO)];
+	[[LCInfoView appearance] setLineColor:[UIColor lightGrayColor]];
+	[[LCTouchSelection appearance] setCornerRadius:2.0f];
+	[[LCTouchSelection appearance] setBackgroundColor:[[UIColor lightGrayColor] colorWithAlphaComponent:0.2f]];
+	[[LCLegendView appearance] setCornerRadius:2.0f];
+	[[LCLegendView appearance] setBackgroundColor:[[UIColor lightGrayColor] colorWithAlphaComponent:0.2f]];
+
+	
+	
     LCLineChartData *d1x = [LCLineChartData new];
     {
         LCLineChartData *d1 = d1x;
@@ -97,8 +109,12 @@
     _chartViewUpper.ySteps = @[@"1.0",@"2.0",@"3.0",@"4.0",@"5.0",@"A big label at 6.0"];
     _chartViewUpper.data = @[d1x,d2x];
 	
-	_chartViewUpper.fillPlot = YES;
+//	_chartViewUpper.fillPlot = YES;
+//	_chartViewUpper.drawsDataBorder = NO;
+	
+	
 
+	
 //    chartView.drawsDataPoints = NO; // Uncomment to turn off circles at data points.
 //    chartView.drawsDataLines = NO; // Uncomment to turn off lines connecting data points.
 //    chartView.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1.0]; // Uncomment for custom background color.

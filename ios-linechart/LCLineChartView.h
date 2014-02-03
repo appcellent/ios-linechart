@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+#import "LCLegendView.h"
+#import "LCInfoView.h"
+
 @class LCLineChartDataItem;
 
 typedef LCLineChartDataItem *(^LCLineChartDataGetter)(NSUInteger item);
@@ -58,9 +61,7 @@ typedef LCLineChartDataItem *(^LCLineChartDataGetter)(NSUInteger item);
 
 @class LCTouchSelection;
 @protocol LCTouchSelectionDelegate <NSObject>
-
 -(NSString*)formattedValueForSelection:(LCTouchSelection*)selection;
-
 @end
 
 @interface LCTouchSelection : UIView
@@ -69,6 +70,8 @@ typedef LCLineChartDataItem *(^LCLineChartDataGetter)(NSUInteger item);
 @property (strong) UILabel* deltaLabel;
 
 @property (weak) id<LCTouchSelectionDelegate> delegate;
+
+- (void)setCornerRadius:(CGFloat)cornerRadius UI_APPEARANCE_SELECTOR;
 @end
 
 

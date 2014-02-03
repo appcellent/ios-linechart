@@ -10,16 +10,30 @@
 #import "UIKit+DrawingHelpers.h"
 #import <CoreGraphics/CoreGraphics.h>
 
+@interface LCLegendView ()
+@property (assign) CGFloat cornerRadius;
+@end
+
 @implementation LCLegendView
 @synthesize titlesFont=_titlesFont;
 
 #define COLORPADDING 15
 #define PADDING 5
 
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        _cornerRadius = 7.0f;
+		self.backgroundColor = [UIColor colorWithWhite:0.2 alpha:0.1];
+    }
+    return self;
+}
+
 - (void)drawRect:(CGRect)rect {
     CGContextRef c = UIGraphicsGetCurrentContext();
-    CGContextSetFillColorWithColor(c, [[UIColor colorWithWhite:0.0 alpha:0.1] CGColor]);
-    CGContextFillRoundedRect(c, self.bounds, 7);
+	CGContextSetFillColorWithColor(c, [self.backgroundColor CGColor]);
+    CGContextFillRoundedRect(c, self.bounds, _cornerRadius);
     
     
     CGFloat y = 0;
@@ -43,7 +57,7 @@
 
 - (UIFont *)titlesFont {
     if(_titlesFont == nil)
-        _titlesFont = [UIFont boldSystemFontOfSize:10];
+        _titlesFont = [UIFont boldSystemFontOfSize:14];
     return _titlesFont;
 }
 
@@ -60,5 +74,4 @@
     }
     return CGSizeMake(COLORPADDING + w + 2 * PADDING, h + 2 * PADDING);
 }
-
 @end

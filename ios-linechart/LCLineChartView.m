@@ -69,16 +69,20 @@
 	{
 		self.alpha = 0.0f;
 		
-		self.deltaLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 20, 86, 30)];
+		self.deltaLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 20, 86, 28)];
 		_deltaLabel.backgroundColor = [UIColor colorWithRed:0.663 green:0.788 blue:0.455 alpha:1.000];
 		_deltaLabel.textColor = [UIColor whiteColor];
 		_deltaLabel.textAlignment = NSTextAlignmentCenter;
 		_deltaLabel.font = [UIFont systemFontOfSize:14.0f];
 		_deltaLabel.text = @"";
-		_deltaLabel.layer.cornerRadius = 2.0f;
+		_deltaLabel.layer.cornerRadius = 7;
 		[self addSubview:_deltaLabel];
 	}
 	return self;
+}
+
+- (void)setCornerRadius:(CGFloat)cornerRadius {
+    _deltaLabel.layer.cornerRadius = cornerRadius;
 }
 
 -(void)layoutSubviews
@@ -148,7 +152,6 @@
 
     self.legendView = [[LCLegendView alloc] init];
     self.legendView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
-    self.legendView.backgroundColor = [UIColor clearColor];
     [self addSubview:self.legendView];
     
     self.axisLabelColor = [UIColor grayColor];
@@ -468,8 +471,8 @@
 		[self addSubview:touchInfo.infoView];
 		
 		// CurrentPosView
-		touchInfo.currentPosView = [[UIView alloc] initWithFrame:CGRectMake(self.padding, self.padding, 1 / self.contentScaleFactor, 50)];
-		touchInfo.currentPosView.backgroundColor = [UIColor colorWithRed:0.7 green:0.0 blue:0.0 alpha:1.0];
+		touchInfo.currentPosView = [[UIView alloc] initWithFrame:CGRectMake(self.padding, self.padding, 2 / self.contentScaleFactor, 50)];
+		touchInfo.currentPosView.backgroundColor = ([[LCInfoView appearance] lineColor]) ? [[LCInfoView appearance] lineColor] : [UIColor colorWithRed:0.7 green:0.0 blue:0.0 alpha:1.0];;
 		touchInfo.currentPosView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
 		touchInfo.currentPosView.alpha = 0.0;
 		[self addSubview:touchInfo.currentPosView];
@@ -493,10 +496,6 @@
     [touchInfo.infoView sizeToFit];
     [touchInfo.infoView setNeedsLayout];
     [touchInfo.infoView setNeedsDisplay];
-	
-	// TODO
-	self.selection.backgroundColor = [self.axisLabelColor colorWithAlphaComponent:0.25f];
-	
 	
     if(touchInfo.currentPosView.alpha == 0.0) {
         CGRect r = touchInfo.currentPosView.frame;

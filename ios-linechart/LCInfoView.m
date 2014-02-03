@@ -11,6 +11,8 @@
 
 
 @interface LCInfoView ()
+@property (assign) CGFloat cornerRadius;
+@property (strong) NSNumber* showGloss;
 
 - (void)recalculateFrame;
 
@@ -31,6 +33,9 @@
         self.infoLabel.textAlignment = NSTextAlignmentCenter;
         [self addSubview:self.infoLabel];
         
+		_cornerRadius = 7.0f;
+		_showGloss = @(YES);
+		_lineColor = [UIColor colorWithRed:0.7 green:0.0 blue:0.0 alpha:1.0];
         self.backgroundColor = [UIColor clearColor];
     }
     return self;
@@ -108,16 +113,19 @@ void CGContextAddRoundedRectWithHookSimple(CGContextRef c, CGRect rect, CGFloat 
     CGContextSetShadow(c, CGSizeMake(0.0, SHADOWSIZE), SHADOWBLUR);
 	
 	CGContextBeginPath(c);
-    CGContextAddRoundedRectWithHookSimple(c, theRect, 7);
+    CGContextAddRoundedRectWithHookSimple(c, theRect, _cornerRadius);
 	CGContextFillPath(c);
 	
-    [[UIColor whiteColor] set];
-	theRect.origin.x += 1;
-	theRect.origin.y += 1;
-	theRect.size.width -= 2;
-	theRect.size.height = theRect.size.height / 2 + 1;
-	CGContextSetAlpha(c, 0.2);
-    CGContextFillRoundedRect(c, theRect, 6);
+	if ([_showGloss boolValue])
+	{
+		[[UIColor whiteColor] set];
+		theRect.origin.x += 1;
+		theRect.origin.y += 1;
+		theRect.size.width -= 2;
+		theRect.size.height = theRect.size.height / 2 + 1;
+		CGContextSetAlpha(c, 0.2);
+		CGContextFillRoundedRect(c, theRect, 6);
+	}
 }
 
 

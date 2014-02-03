@@ -9,10 +9,12 @@
 #import <UIKit/UIKit.h>
 
 
-@interface LCLegendView : UIView
+@interface LCLegendView : UIView <UIAppearance>
 
 @property (nonatomic, strong) UIFont *titlesFont;
 @property (strong) NSArray *titles;
 @property (strong) NSDictionary *colors; // maps titles to UIColors
+
+- (void)setCornerRadius:(CGFloat)cornerRadius UI_APPEARANCE_SELECTOR;
 
 @end
