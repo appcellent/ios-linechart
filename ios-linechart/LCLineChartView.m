@@ -17,6 +17,8 @@
 @property (readwrite) NSString *xLabel; // label to be shown on the x axis
 @property (readwrite) NSString *dataLabel; // label to be shown directly at the data item
 
+@property (readwrite) NSNumber *dataValue; //
+
 - (id)initWithhX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel;
 
 @end
@@ -29,12 +31,19 @@
         self.y = y;
         self.xLabel = xLabel;
         self.dataLabel = dataLabel;
+		self.dataValue = nil;
     }
     return self;
 }
 
 + (LCLineChartDataItem *)dataItemWithX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel {
     return [[LCLineChartDataItem alloc] initWithhX:x y:y xLabel:xLabel dataLabel:dataLabel];
+}
+
++ (LCLineChartDataItem *)dataItemWithX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel andValue:(NSNumber*)value {
+	LCLineChartDataItem* newItem = [[LCLineChartDataItem alloc] initWithhX:x y:y xLabel:xLabel dataLabel:dataLabel];
+	newItem.dataValue = value;
+    return newItem;
 }
 
 @end
@@ -47,12 +56,81 @@
 
 
 
+@implementation LCTouchInfo
+
+@end
+
+@implementation LCTouchSelection
+
+-(id)init
+{
+	self = [super initWithFrame:CGRectZero];
+	if (self)
+	{
+		self.alpha = 0.0f;
+		
+		self.deltaLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 20, 86, 30)];
+		_deltaLabel.backgroundColor = [UIColor colorWithRed:0.663 green:0.788 blue:0.455 alpha:1.000];
+		_deltaLabel.textColor = [UIColor whiteColor];
+		_deltaLabel.textAlignment = NSTextAlignmentCenter;
+		_deltaLabel.font = [UIFont systemFontOfSize:14.0f];
+		_deltaLabel.text = @"";
+		_deltaLabel.layer.cornerRadius = 2.0f;
+		[self addSubview:_deltaLabel];
+	}
+	return self;
+}
+
+-(void)layoutSubviews
+{
+	[super layoutSubviews];
+	
+	if (_firstTouchInfo.closestDataItem && _lastTouchInfo.closestDataItem)
+	{
+		CGRect rectSelection = CGRectMake(0, 0, 0, 0);
+		rectSelection.origin.x = self.firstTouchInfo.currentPosView.frame.origin.x;
+		rectSelection.origin.y = self.firstTouchInfo.currentPosView.frame.origin.y;
+		rectSelection.size.width = self.lastTouchInfo.currentPosView.frame.origin.x - self.firstTouchInfo.currentPosView.frame.origin.x;
+		rectSelection.size.height = self.firstTouchInfo.currentPosView.frame.size.height;
+	
+		self.frame = rectSelection;
+		
+		if ([_firstTouchInfo.closestDataItem.dataValue isEqual:_lastTouchInfo.closestDataItem.dataValue])
+		{
+			_deltaLabel.text = @"";
+			_deltaLabel.alpha = 0.0f;
+		}
+		else
+		{
+			// delta
+			CGRect rectDeltaLabel = _deltaLabel.frame;
+			rectDeltaLabel.origin.x = (self.bounds.size.width*0.5f) - (rectDeltaLabel.size.width*0.5f);
+			_deltaLabel.frame = rectDeltaLabel;
+			_deltaLabel.alpha = 1.0f;
+		
+			if (_delegate && [_delegate respondsToSelector:@selector(formattedValueForSelection:)])
+			{
+				_deltaLabel.text = [_delegate formattedValueForSelection:self];
+			}
+			else
+			{
+				CGFloat delta = [_lastTouchInfo.closestDataItem.dataValue floatValue] / [_firstTouchInfo.closestDataItem.dataValue floatValue];
+				_deltaLabel.text = [NSString stringWithFormat:@"%.2f %%", delta*100];
+			}
+		}
+	}
+}
+
+@end
+
+
+
 @interface LCLineChartView ()
 
 @property LCLegendView *legendView;
-@property LCInfoView *infoView;
-@property UIView *currentPosView;
-@property UILabel *xAxisLabel;
+@property NSMutableDictionary* infoForTouch;
+@property LCTouchSelection* selection;
+@property NSMutableSet* activeTouches;
 
 - (BOOL)drawsAnyData;
 
@@ -68,12 +146,6 @@
     self.padding = 10.f;
     self.xAxisSpacing = 15.f;
 
-    self.currentPosView = [[UIView alloc] initWithFrame:CGRectMake(self.padding, self.padding, 1 / self.contentScaleFactor, 50)];
-    self.currentPosView.backgroundColor = [UIColor colorWithRed:0.7 green:0.0 blue:0.0 alpha:1.0];
-    self.currentPosView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-    self.currentPosView.alpha = 0.0;
-    [self addSubview:self.currentPosView];
-    
     self.legendView = [[LCLegendView alloc] init];
     self.legendView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
     self.legendView.backgroundColor = [UIColor clearColor];
@@ -81,18 +153,14 @@
     
     self.axisLabelColor = [UIColor grayColor];
     
-    self.xAxisLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 20)];
-    self.xAxisLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-    self.xAxisLabel.font = [UIFont boldSystemFontOfSize:10];
-    self.xAxisLabel.textColor = self.axisLabelColor;
-    self.xAxisLabel.textAlignment = NSTextAlignmentCenter;
-    self.xAxisLabel.alpha = 0.0;
-    self.xAxisLabel.backgroundColor = [UIColor clearColor];
-    [self addSubview:self.xAxisLabel];
-    
     self.backgroundColor = [UIColor whiteColor];
     self.scaleFont = [UIFont systemFontOfSize:10.0];
-    
+	
+	self.infoForTouch = [[NSMutableDictionary alloc] initWithCapacity:5];
+	self.selection = [[LCTouchSelection alloc] init];
+	[self addSubview:self.selection];
+	self.activeTouches = [[NSMutableSet alloc] initWithCapacity:5];
+	
     self.autoresizesSubviews = YES;
     self.contentMode = UIViewContentModeRedraw;
     
@@ -119,7 +187,10 @@
     if(axisLabelColor != _axisLabelColor) {
         [self willChangeValueForKey:@"axisLabelColor"];
         _axisLabelColor = axisLabelColor;
-        self.xAxisLabel.textColor = axisLabelColor;
+		
+		for (LCTouchInfo* touchInfo in [_infoForTouch allValues])
+			touchInfo.xAxisLabel.textColor = axisLabelColor;
+		
         [self didChangeValueForKey:@"axisLabelColor"];
     }
 }
@@ -141,17 +212,20 @@
     r.origin.x = self.frame.size.width - self.legendView.frame.size.width - 3 - self.padding;
     r.origin.y = 3 + self.padding;
     self.legendView.frame = r;
-    
-    r = self.currentPosView.frame;
-    CGFloat h = self.frame.size.height;
-    r.size.height = h - 2 * self.padding - self.xAxisSpacing;
-    r.origin.y = self.padding;
-    self.currentPosView.frame = r;
-    
-    [self.xAxisLabel sizeToFit];
-    r = self.xAxisLabel.frame;
-    r.origin.y = self.frame.size.height - self.xAxisSpacing - self.padding + 2;
-    self.xAxisLabel.frame = r;
+
+    for (LCTouchInfo* touchInfo in [_infoForTouch allValues])
+	{
+		r = touchInfo.currentPosView.frame;
+		CGFloat h = self.frame.size.height;
+		r.size.height = h - 2 * self.padding - self.xAxisSpacing;
+		r.origin.y = self.padding;
+		touchInfo.currentPosView.frame = r;
+		
+		[touchInfo.xAxisLabel sizeToFit];
+		r = touchInfo.xAxisLabel.frame;
+		r.origin.y = self.frame.size.height - self.xAxisSpacing - self.padding + 2;
+		touchInfo.xAxisLabel.frame = r;
+	}
     
     [self bringSubviewToFront:self.legendView];
 }
@@ -338,10 +412,6 @@
 }
 
 - (void)showIndicatorForTouch:(UITouch *)touch {
-    if(! self.infoView) {
-        self.infoView = [[LCInfoView alloc] init];
-        [self addSubview:self.infoView];
-    }
     
     CGPoint pos = [touch locationInView:self];
     CGFloat xStart = self.padding + self.yAxisLabelsWidth;
@@ -376,59 +446,143 @@
         }
     }
     
-    self.infoView.infoLabel.text = closest.dataLabel;
-    self.infoView.tapPoint = closestPos;
-    [self.infoView sizeToFit];
-    [self.infoView setNeedsLayout];
-    [self.infoView setNeedsDisplay];
-    
-    if(self.currentPosView.alpha == 0.0) {
-        CGRect r = self.currentPosView.frame;
+	NSString* keyForTouch = [NSString stringWithFormat:@"%p", touch];
+	LCTouchInfo* touchInfo = [_infoForTouch objectForKey:keyForTouch];
+	
+	if (!touchInfo)
+	{
+		touchInfo = [[LCTouchInfo alloc] init];
+		
+		// InfoView
+		touchInfo.infoView = [[LCInfoView alloc] init];
+		[self addSubview:touchInfo.infoView];
+		
+		// CurrentPosView
+		touchInfo.currentPosView = [[UIView alloc] initWithFrame:CGRectMake(self.padding, self.padding, 1 / self.contentScaleFactor, 50)];
+		touchInfo.currentPosView.backgroundColor = [UIColor colorWithRed:0.7 green:0.0 blue:0.0 alpha:1.0];
+		touchInfo.currentPosView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+		touchInfo.currentPosView.alpha = 0.0;
+		[self addSubview:touchInfo.currentPosView];
+		
+		// xAxisLabel
+		touchInfo.xAxisLabel = [[UILabel alloc] initWithFrame:CGRectMake(closestPos.x, yStart + availableHeight, 20, 20)];
+		touchInfo.xAxisLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+		touchInfo.xAxisLabel.font = [UIFont boldSystemFontOfSize:10];
+		touchInfo.xAxisLabel.textColor = self.axisLabelColor;
+		touchInfo.xAxisLabel.textAlignment = NSTextAlignmentCenter;
+		touchInfo.xAxisLabel.alpha = 0.0;
+		touchInfo.xAxisLabel.backgroundColor = [UIColor clearColor];
+		[self addSubview:touchInfo.xAxisLabel];
+		
+		[_infoForTouch setObject:touchInfo forKey:keyForTouch];
+	}
+
+	touchInfo.closestDataItem = closest;
+    touchInfo.infoView.infoLabel.text = closest.dataLabel;
+    touchInfo.infoView.tapPoint = closestPos;
+    [touchInfo.infoView sizeToFit];
+    [touchInfo.infoView setNeedsLayout];
+    [touchInfo.infoView setNeedsDisplay];
+	
+	// TODO
+	self.selection.backgroundColor = [self.axisLabelColor colorWithAlphaComponent:0.25f];
+	
+	
+    if(touchInfo.currentPosView.alpha == 0.0) {
+        CGRect r = touchInfo.currentPosView.frame;
         r.origin.x = closestPos.x + 3 - 1;
-        self.currentPosView.frame = r;
+        touchInfo.currentPosView.frame = r;
     }
     
     [UIView animateWithDuration:0.1 animations:^{
-        self.infoView.alpha = 1.0;
-        self.currentPosView.alpha = 1.0;
-        self.xAxisLabel.alpha = 1.0;
-        
-        CGRect r = self.currentPosView.frame;
+        touchInfo.infoView.alpha = 1.0;
+        touchInfo.currentPosView.alpha = 1.0;
+        touchInfo.xAxisLabel.alpha = 1.0;
+		
+        CGRect r = touchInfo.currentPosView.frame;
         r.origin.x = closestPos.x + 3 - 1;
-        self.currentPosView.frame = r;
-        
-        self.xAxisLabel.text = closest.xLabel;
-        if(self.xAxisLabel.text != nil) {
-            [self.xAxisLabel sizeToFit];
-            r = self.xAxisLabel.frame;
+        touchInfo.currentPosView.frame = r;
+		
+		[self.selection layoutSubviews];
+		
+        touchInfo.xAxisLabel.text = closest.xLabel;
+        if(touchInfo.xAxisLabel.text != nil) {
+            [touchInfo.xAxisLabel sizeToFit];
+            r = touchInfo.xAxisLabel.frame;
             r.origin.x = round(closestPos.x - r.size.width / 2);
-            self.xAxisLabel.frame = r;
+            touchInfo.xAxisLabel.frame = r;
         }
     }];
 }
 
-- (void)hideIndicator {
+- (void)hideIndicatorForTouches:(NSSet*)touches {
     [UIView animateWithDuration:0.1 animations:^{
-        self.infoView.alpha = 0.0;
-        self.currentPosView.alpha = 0.0;
-        self.xAxisLabel.alpha = 0.0;
+		//for (LCTouchInfo* touchInfo in [_infoForTouch allValues]) {
+		for (UITouch* touch in touches) {
+			LCTouchInfo* touchInfo = [_infoForTouch objectForKey:[NSString stringWithFormat:@"%p", touch]];
+			touchInfo.infoView.alpha = 0.0f;
+			touchInfo.currentPosView.alpha = 0.0f;
+			touchInfo.xAxisLabel.alpha = 0.0f;
+		}
+		self.selection.alpha = 0.0f;
     }];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self showIndicatorForTouch:[touches anyObject]];
+	
+	for (UITouch* touch in touches)
+	{
+		[self showIndicatorForTouch:touch];
+	}
+	
+	[_activeTouches unionSet:touches];
+	[self refreshSelection:touches];
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self showIndicatorForTouch:[touches anyObject]];	
+	
+	for (UITouch* touch in touches)
+	{
+		[self showIndicatorForTouch:touch];
+	}
+	[self refreshSelection:touches];
+}
+
+- (void)refreshSelection:(NSSet*)touches
+{
+	if (_activeTouches.count > 1)
+	{
+		NSArray* sortedTouches = [[_activeTouches allObjects] sortedArrayUsingComparator: ^(id touch1, id touch2) {
+			
+			CGPoint pos1 = [touch1 locationInView:self];
+			CGPoint pos2 = [touch2 locationInView:self];
+			
+			if (pos1.x > pos2.x) {
+				return (NSComparisonResult)NSOrderedDescending;
+			}
+			return (NSComparisonResult)NSOrderedSame;
+		}];
+		
+		NSString* firstTouchKey = [NSString stringWithFormat:@"%p", [sortedTouches firstObject]];
+		self.selection.firstTouchInfo = [_infoForTouch objectForKey:firstTouchKey];
+		NSString* lastTouchKey = [NSString stringWithFormat:@"%p", [sortedTouches lastObject]];
+		self.selection.lastTouchInfo = [_infoForTouch objectForKey:lastTouchKey];
+		
+		self.selection.alpha = 1.0;
+		[self.selection layoutSubviews];
+	}
+	else
+		self.selection.alpha = 0.0f;
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self hideIndicator];
+    [self hideIndicatorForTouches:touches];
+	[_activeTouches minusSet:touches];
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self hideIndicator];
+    [self hideIndicatorForTouches:touches];
+	[_activeTouches minusSet:touches];
 }
 
 

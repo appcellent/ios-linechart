@@ -56,7 +56,7 @@
             float y = [arr2[item] floatValue];
             NSString *label1 = [self.formatter stringFromDate:[date1 dateByAddingTimeInterval:x]];
             NSString *label2 = [NSString stringWithFormat:@"%f", y];
-            return [LCLineChartDataItem dataItemWithX:x y:y xLabel:label1 dataLabel:label2];
+            return [LCLineChartDataItem dataItemWithX:x y:y xLabel:label1 dataLabel:label2 andValue:arr2[item]];
         };
     }
     
@@ -88,7 +88,7 @@
             float y = [arr2[item] floatValue];
             NSString *label1 = [self.formatter stringFromDate:[date1 dateByAddingTimeInterval:x]];
             NSString *label2 = [NSString stringWithFormat:@"%f", y];
-            return [LCLineChartDataItem dataItemWithX:x y:y xLabel:label1 dataLabel:label2];
+            return [LCLineChartDataItem dataItemWithX:x y:y xLabel:label1 dataLabel:label2 andValue:arr2[item]];
         };
     }
     

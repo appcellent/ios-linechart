@@ -21,7 +21,10 @@ typedef LCLineChartDataItem *(^LCLineChartDataGetter)(NSUInteger item);
 @property (readonly) NSString *xLabel; /// label to be shown on the x axis
 @property (readonly) NSString *dataLabel; /// label to be shown directly at the data item
 
+@property (readonly) NSNumber *dataValue; //
+
 + (LCLineChartDataItem *)dataItemWithX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel;
++ (LCLineChartDataItem *)dataItemWithX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel andValue:(NSNumber*)value;
 
 @end
 
@@ -40,6 +43,33 @@ typedef LCLineChartDataItem *(^LCLineChartDataGetter)(NSUInteger item);
 
 @end
 
+
+
+@class LCInfoView;
+@interface LCTouchInfo : NSObject
+
+@property (strong) LCInfoView* infoView;
+@property (strong) UIView *currentPosView;
+@property (strong) UILabel *xAxisLabel;
+@property (strong) LCLineChartDataItem* closestDataItem;
+
+@end
+
+
+@class LCTouchSelection;
+@protocol LCTouchSelectionDelegate <NSObject>
+
+-(NSString*)formattedValueForSelection:(LCTouchSelection*)selection;
+
+@end
+
+@interface LCTouchSelection : UIView
+@property (strong) LCTouchInfo* firstTouchInfo;
+@property (strong) LCTouchInfo* lastTouchInfo;
+@property (strong) UILabel* deltaLabel;
+
+@property (weak) id<LCTouchSelectionDelegate> delegate;
+@end
 
 
 @interface LCLineChartView : UIView
