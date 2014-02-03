@@ -59,15 +59,16 @@
 @end
 
 
-#define X_AXIS_SPACE 15
-#define PADDING 10
 
 
 @implementation LCLineChartView
 @synthesize data=_data;
 
 - (void)setDefaultValues {
-    self.currentPosView = [[UIView alloc] initWithFrame:CGRectMake(PADDING, PADDING, 1 / self.contentScaleFactor, 50)];
+    self.padding = 10.f;
+    self.xAxisSpacing = 15.f;
+
+    self.currentPosView = [[UIView alloc] initWithFrame:CGRectMake(self.padding, self.padding, 1 / self.contentScaleFactor, 50)];
     self.currentPosView.backgroundColor = [UIColor colorWithRed:0.7 green:0.0 blue:0.0 alpha:1.0];
     self.currentPosView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     self.currentPosView.alpha = 0.0;
@@ -97,6 +98,7 @@
     
     self.drawsDataPoints = YES;
     self.drawsDataLines  = YES;
+    self.smoothXAxisOnly = NO;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -136,18 +138,19 @@
 - (void)layoutSubviews {
     [self.legendView sizeToFit];
     CGRect r = self.legendView.frame;
-    r.origin.x = self.frame.size.width - self.legendView.frame.size.width - 3 - PADDING;
-    r.origin.y = 3 + PADDING;
+    r.origin.x = self.frame.size.width - self.legendView.frame.size.width - 3 - self.padding;
+    r.origin.y = 3 + self.padding;
     self.legendView.frame = r;
     
     r = self.currentPosView.frame;
     CGFloat h = self.frame.size.height;
-    r.size.height = h - 2 * PADDING - X_AXIS_SPACE;
+    r.size.height = h - 2 * self.padding - self.xAxisSpacing;
+    r.origin.y = self.padding;
     self.currentPosView.frame = r;
     
     [self.xAxisLabel sizeToFit];
     r = self.xAxisLabel.frame;
-    r.origin.y = self.frame.size.height - X_AXIS_SPACE - PADDING + 2;
+    r.origin.y = self.frame.size.height - self.xAxisSpacing - self.padding + 2;
     self.xAxisLabel.frame = r;
     
     [self bringSubviewToFront:self.legendView];
@@ -177,11 +180,11 @@
     
     CGContextRef c = UIGraphicsGetCurrentContext();
     
-    CGFloat availableHeight = self.bounds.size.height - 2 * PADDING - X_AXIS_SPACE;
+    CGFloat availableHeight = self.bounds.size.height - 2 * self.padding - self.xAxisSpacing;
     
-    CGFloat availableWidth = self.bounds.size.width - 2 * PADDING - self.yAxisLabelsWidth;
-    CGFloat xStart = PADDING + self.yAxisLabelsWidth;
-    CGFloat yStart = PADDING;
+    CGFloat availableWidth = self.bounds.size.width - 2 * self.padding - self.yAxisLabelsWidth;
+    CGFloat xStart = self.padding + self.yAxisLabelsWidth;
+    CGFloat yStart = self.padding;
     
     static CGFloat dashedPattern[] = {4,2};
     
@@ -205,7 +208,7 @@
         [[UIColor colorWithWhite:0.9 alpha:1.0] set];
         CGContextSetLineDash(c, 0, dashedPattern, 2);
         CGContextMoveToPoint(c, xStart, round(y) + 0.5);
-        CGContextAddLineToPoint(c, self.bounds.size.width - PADDING, round(y) + 0.5);
+        CGContextAddLineToPoint(c, self.bounds.size.width - self.padding, round(y) + 0.5);
         CGContextStrokePath(c);
         
         i++;
@@ -220,7 +223,7 @@
             CGFloat x = xStart + widthPerStep * (xCnt - 1 - i);
             
             [[UIColor colorWithWhite:0.9 alpha:1.0] set];
-            CGContextMoveToPoint(c, round(x) + 0.5, PADDING);
+            CGContextMoveToPoint(c, round(x) + 0.5, self.padding);
             CGContextAddLineToPoint(c, round(x) + 0.5, yStart + availableHeight);
             CGContextStrokePath(c);
         }
@@ -251,13 +254,25 @@
                     CGFloat y = yStart + round((1.0 - (datItem.y - self.yMin) / yRangeLen) * availableHeight);
                     CGFloat xDiff = x - prevX;
                     CGFloat yDiff = y - prevY;
-                    
+
                     if(xDiff != 0) {
-                        CGFloat xSmoothing = self.smoothPlot ? MIN(30,xDiff) : 0;
-                        CGFloat ySmoothing = 0.5;
-                        CGFloat slope = yDiff / xDiff;
-                        CGPoint controlPt1 = CGPointMake(prevX + xSmoothing, prevY + ySmoothing * slope * xSmoothing);
-                        CGPoint controlPt2 = CGPointMake(x - xSmoothing, y - ySmoothing * slope * xSmoothing);
+                        CGPoint controlPt1; CGPoint controlPt2;
+
+                        if (self.smoothXAxisOnly) {
+                            // limit the smoothing to the x-axis only
+                            CGFloat strength = 0.5f;
+                            controlPt1 = CGPointMake(prevX + (strength * xDiff), prevY);
+                            controlPt2 = CGPointMake(x - (strength * xDiff), y);
+                        }
+                        else {
+                            // the original smoothing.
+                            CGFloat xSmoothing = self.smoothPlot ? MIN(30,xDiff) : 0;
+                            CGFloat ySmoothing = 0.5;
+                            CGFloat slope = yDiff / xDiff;
+                            controlPt1 = CGPointMake(prevX + xSmoothing, prevY + ySmoothing * slope * xSmoothing);
+                            controlPt2 = CGPointMake(x - xSmoothing, y - ySmoothing * slope * xSmoothing);
+                        }
+
                         CGPathAddCurveToPoint(path, NULL, controlPt1.x, controlPt1.y, controlPt2.x, controlPt2.y, x, y);
                     }
                     else {
@@ -265,6 +280,13 @@
                     }
                     prevX = x;
                     prevY = y;
+                }
+
+                // add additional points to fill/close the curve
+                if (self.fillPlot) {
+                    CGPathAddLineToPoint(path, NULL, xStart + availableWidth, yStart + availableHeight);
+                    CGPathAddLineToPoint(path, NULL, xStart, yStart + availableHeight);
+                    CGContextSetFillColorWithColor(c, [data.color CGColor]);
                 }
                 
                 CGContextAddPath(c, path);
@@ -275,8 +297,14 @@
                 CGContextAddPath(c, path);
                 CGContextSetStrokeColorWithColor(c, [data.color CGColor]);
                 CGContextSetLineWidth(c, 2);
-                CGContextStrokePath(c);
-                
+
+                if (self.fillPlot) {
+                    CGContextDrawPath(c, kCGPathFill);
+                }
+                else {
+                    CGContextDrawPath(c, kCGPathStroke);
+                }
+
                 CGPathRelease(path);
             }
         } // draw actual chart data
@@ -315,14 +343,14 @@
     }
     
     CGPoint pos = [touch locationInView:self];
-    CGFloat xStart = PADDING + self.yAxisLabelsWidth;
-    CGFloat yStart = PADDING;
+    CGFloat xStart = self.padding + self.yAxisLabelsWidth;
+    CGFloat yStart = self.padding;
     CGFloat yRangeLen = self.yMax - self.yMin;
     if(yRangeLen == 0) yRangeLen = 1;
     CGFloat xPos = pos.x - xStart;
     CGFloat yPos = pos.y - yStart;
-    CGFloat availableWidth = self.bounds.size.width - 2 * PADDING - self.yAxisLabelsWidth;
-    CGFloat availableHeight = self.bounds.size.height - 2 * PADDING - X_AXIS_SPACE;
+    CGFloat availableWidth = self.bounds.size.width - 2 * self.padding - self.yAxisLabelsWidth;
+    CGFloat availableHeight = self.bounds.size.height - 2 * self.padding - self.xAxisSpacing;
     
     LCLineChartDataItem *closest = nil;
     float minDist = FLT_MAX;
@@ -416,7 +444,7 @@
         CGSize labelSize = [label sizeWithFont:self.scaleFont];
         if(labelSize.width > maxV) maxV = labelSize.width;
     }
-    return maxV + PADDING;
+    return maxV + self.padding;
 }
 
 @end
