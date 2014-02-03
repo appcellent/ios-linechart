@@ -29,12 +29,12 @@
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="MLS-ex-nRu" secondAttribute="bottom" constant="20" symbolic="YES" type="default" id="A8m-F9-1jV"/>
                             <constraint firstItem="MLS-ex-nRu" firstAttribute="trailing" secondItem="Lhs-Bc-y9x" secondAttribute="trailing" type="default" id="BRc-j4-gyd"/>
-                            <constraint firstItem="MLS-ex-nRu" firstAttribute="top" secondItem="5" secondAttribute="top" constant="524" id="GeJ-Xg-nGD"/>
                             <constraint firstItem="Lhs-Bc-y9x" firstAttribute="top" secondItem="5" secondAttribute="top" constant="20" symbolic="YES" type="default" id="NqU-ad-SHs"/>
                             <constraint firstItem="MLS-ex-nRu" firstAttribute="leading" secondItem="Lhs-Bc-y9x" secondAttribute="leading" type="default" id="PjT-3e-iht"/>
                             <constraint firstAttribute="trailing" secondItem="Lhs-Bc-y9x" secondAttribute="trailing" constant="20" symbolic="YES" type="default" id="d3G-jd-09S"/>
                             <constraint firstItem="Lhs-Bc-y9x" firstAttribute="leading" secondItem="5" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="jyL-Xj-Mig"/>
-                            <constraint firstAttribute="bottom" secondItem="Lhs-Bc-y9x" secondAttribute="bottom" constant="524" id="ub9-Jb-ls2"/>
+                            <constraint firstItem="MLS-ex-nRu" firstAttribute="top" secondItem="5" secondAttribute="top" constant="524" id="pvE-1f-WtX"/>
+                            <constraint firstItem="MLS-ex-nRu" firstAttribute="top" secondItem="Lhs-Bc-y9x" secondAttribute="bottom" constant="44" type="user" id="vB1-b3-1X3"/>
                         </constraints>
                     </view>
                     <connections>
