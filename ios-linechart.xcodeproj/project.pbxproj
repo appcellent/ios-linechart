@@ -21,6 +21,7 @@
 		1C04F8A317AC0FA500F8A543 /* LCLegendView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C04F8A017AC0FA500F8A543 /* LCLegendView.m */; };
 		1C04F8A417AC0FA500F8A543 /* LCLineChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C04F8A217AC0FA500F8A543 /* LCLineChartView.m */; };
 		1C04F8A717AC402600F8A543 /* LCInfoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C04F8A617AC402600F8A543 /* LCInfoView.m */; };
+		3B446951189F84150059E956 /* UIKit+DrawingHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B446950189F84150059E956 /* UIKit+DrawingHelpers.m */; };
 		C4098B43BD504D33BFA4645B /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E88FE8D4A4A24E6E99D658EA /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +49,8 @@
 		1C04F8A517AC402600F8A543 /* LCInfoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LCInfoView.h; sourceTree = "<group>"; };
 		1C04F8A617AC402600F8A543 /* LCInfoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LCInfoView.m; sourceTree = "<group>"; };
 		1C5999D118166CA90031C805 /* LineChart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineChart.h; sourceTree = "<group>"; };
+		3B44694F189F84150059E956 /* UIKit+DrawingHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIKit+DrawingHelpers.h"; sourceTree = "<group>"; };
+		3B446950189F84150059E956 /* UIKit+DrawingHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIKit+DrawingHelpers.m"; sourceTree = "<group>"; };
 		E763E74E5B5048B682038C66 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
 		E88FE8D4A4A24E6E99D658EA /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -99,6 +102,8 @@
 		1C04F88217AC0F5A00F8A543 /* ios-linechart */ = {
 			isa = PBXGroup;
 			children = (
+				3B44694F189F84150059E956 /* UIKit+DrawingHelpers.h */,
+				3B446950189F84150059E956 /* UIKit+DrawingHelpers.m */,
 				1C04F89F17AC0FA500F8A543 /* LCLegendView.h */,
 				1C04F8A017AC0FA500F8A543 /* LCLegendView.m */,
 				1C04F8A117AC0FA500F8A543 /* LCLineChartView.h */,
@@ -234,6 +239,7 @@
 				1C04F88D17AC0F5A00F8A543 /* ChartAppDelegate.m in Sources */,
 				1C04F89917AC0F5A00F8A543 /* ChartViewController.m in Sources */,
 				1C04F8A317AC0FA500F8A543 /* LCLegendView.m in Sources */,
+				3B446951189F84150059E956 /* UIKit+DrawingHelpers.m in Sources */,
 				1C04F8A417AC0FA500F8A543 /* LCLineChartView.m in Sources */,
 				1C04F8A717AC402600F8A543 /* LCInfoView.m in Sources */,
 			);

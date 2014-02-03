@@ -7,7 +7,6 @@
 //
 
 #import "ChartViewController.h"
-#import "LCLineChartView.h"
 
 @interface ChartViewController ()
 
@@ -93,18 +92,15 @@
         };
     }
     
-    LCLineChartView *chartView = [[LCLineChartView alloc] initWithFrame:CGRectMake(20, 400, 500, 300)];
-    chartView.yMin = 0;
-    chartView.yMax = 6;
-    chartView.ySteps = @[@"1.0",@"2.0",@"3.0",@"4.0",@"5.0",@"A big label at 6.0"];
-    chartView.data = @[d1x,d2x];
+    _chartViewUpper.yMin = 0;
+    _chartViewUpper.yMax = 6;
+    _chartViewUpper.ySteps = @[@"1.0",@"2.0",@"3.0",@"4.0",@"5.0",@"A big label at 6.0"];
+    _chartViewUpper.data = @[d1x,d2x];
 
 //    chartView.drawsDataPoints = NO; // Uncomment to turn off circles at data points.
 //    chartView.drawsDataLines = NO; // Uncomment to turn off lines connecting data points.
 //    chartView.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1.0]; // Uncomment for custom background color.
 
-    [self.view addSubview:chartView];
-    
     {
         LCLineChartData *d = [LCLineChartData new];
         d.xMin = 1;
@@ -127,18 +123,17 @@
             return [LCLineChartDataItem dataItemWithX:x y:y xLabel:label1 dataLabel:label2];
         };
         
-        LCLineChartView *chartView = [[LCLineChartView alloc] initWithFrame:CGRectMake(20, 700, 500, 300)];
-        chartView.yMin = 0;
-        chartView.yMax = powf(2, 31 / 7) + 0.5;
-        chartView.ySteps = @[@"0.0",
-                             [NSString stringWithFormat:@"%.02f", chartView.yMax / 2],
-                             [NSString stringWithFormat:@"%.02f", chartView.yMax]];
-        chartView.xStepsCount = 5;
-        chartView.data = @[d];
+        _chartViewLower.yMin = 0;
+        _chartViewLower.yMax = powf(2, 31 / 7) + 0.5;
+        _chartViewLower.ySteps = @[@"0.0",
+                             [NSString stringWithFormat:@"%.02f", _chartViewLower.yMax / 2],
+                             [NSString stringWithFormat:@"%.02f", _chartViewLower.yMax]];
+        _chartViewLower.xStepsCount = 5;
+        _chartViewLower.data = @[d];
         
-        chartView.axisLabelColor = [UIColor blueColor];
+        _chartViewLower.axisLabelColor = [UIColor blueColor];
         
-        [self.view addSubview:chartView];
+        [self.view addSubview:_chartViewLower];
     }
 }
 
