@@ -281,13 +281,6 @@
                     prevX = x;
                     prevY = y;
                 }
-
-                // add additional points to fill/close the curve
-                if (self.fillPlot) {
-                    CGPathAddLineToPoint(path, NULL, xStart + availableWidth, yStart + availableHeight);
-                    CGPathAddLineToPoint(path, NULL, xStart, yStart + availableHeight);
-                    CGContextSetFillColorWithColor(c, [data.color CGColor]);
-                }
                 
                 CGContextAddPath(c, path);
                 CGContextSetStrokeColorWithColor(c, [self.backgroundColor CGColor]);
@@ -298,13 +291,21 @@
                 CGContextSetStrokeColorWithColor(c, [data.color CGColor]);
                 CGContextSetLineWidth(c, 2);
 
+				// make a mutable copy of the current path to fill it afterwards
+				CGMutablePathRef filledPath = CGPathCreateMutableCopy(path);
+				
+				// stroke the path
+				CGContextDrawPath(c, kCGPathStroke);
+				
+				// add additional points to fill/close the curve
                 if (self.fillPlot) {
-                    CGContextDrawPath(c, kCGPathFill);
+					CGPathAddLineToPoint(filledPath, NULL, xStart + availableWidth, yStart + availableHeight);
+                    CGPathAddLineToPoint(filledPath, NULL, xStart, yStart + availableHeight);
+                    CGContextSetFillColorWithColor(c, [[data.color colorWithAlphaComponent:0.2f] CGColor]);
+					CGContextAddPath(c, filledPath);
+					CGContextDrawPath(c, kCGPathFill);
                 }
-                else {
-                    CGContextDrawPath(c, kCGPathStroke);
-                }
-
+				
                 CGPathRelease(path);
             }
         } // draw actual chart data
