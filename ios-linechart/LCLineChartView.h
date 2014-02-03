@@ -85,6 +85,7 @@ typedef LCLineChartDataItem *(^LCLineChartDataGetter)(NSUInteger item);
 @property BOOL smoothXAxisOnly; // limit the smoothing to horizontal only. Default NO.
 @property BOOL drawsDataPoints; // Switch to turn off circles on data points. On by default.
 @property BOOL drawsDataLines; // Switch to turn off lines connecting data points. On by default.
+@property BOOL drawsDataBorder; // Switch to turn off border around data points and lines. On by default
 @property BOOL fillPlot; // fill the area under the curve.
 
 @property float padding; // padding for the chart data within the view.
