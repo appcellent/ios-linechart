@@ -29,13 +29,13 @@
 	
 	
 	// Set custom appearance
-	[[LCInfoView appearance] setCornerRadius:2.0f];
-	[[LCInfoView appearance] setShowGloss:@(NO)];
-	[[LCInfoView appearance] setLineColor:[UIColor lightGrayColor]];
-	[[LCTouchSelection appearance] setCornerRadius:2.0f];
-	[[LCTouchSelection appearance] setBackgroundColor:[[UIColor lightGrayColor] colorWithAlphaComponent:0.2f]];
-	[[LCLegendView appearance] setCornerRadius:2.0f];
-	[[LCLegendView appearance] setBackgroundColor:[[UIColor lightGrayColor] colorWithAlphaComponent:0.2f]];
+//	[[LCInfoView appearance] setCornerRadius:2.0f];
+//	[[LCInfoView appearance] setShowGloss:@(NO)];
+//	[[LCInfoView appearance] setLineColor:[UIColor lightGrayColor]];
+//	[[LCTouchSelection appearance] setCornerRadius:2.0f];
+//	[[LCTouchSelection appearance] setBackgroundColor:[[UIColor lightGrayColor] colorWithAlphaComponent:0.2f]];
+//	[[LCLegendView appearance] setCornerRadius:2.0f];
+//	[[LCLegendView appearance] setBackgroundColor:[[UIColor lightGrayColor] colorWithAlphaComponent:0.2f]];
 
 	
 	
@@ -111,13 +111,13 @@
 	
 //	_chartViewUpper.fillPlot = YES;
 //	_chartViewUpper.drawsDataBorder = NO;
-	
-	
-
+	_chartViewUpper.drawsLegend = NO;
 	
 //    chartView.drawsDataPoints = NO; // Uncomment to turn off circles at data points.
 //    chartView.drawsDataLines = NO; // Uncomment to turn off lines connecting data points.
 //    chartView.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1.0]; // Uncomment for custom background color.
+	
+	
 
     {
         LCLineChartData *d = [LCLineChartData new];

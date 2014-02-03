@@ -172,8 +172,6 @@
     self.drawsDataLines  = YES;
 	self.drawsDataBorder = YES;
     self.smoothXAxisOnly = NO;
-	
-	self.legendView.hidden = !self.drawsLegend;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -188,6 +186,12 @@
         [self setDefaultValues];
     }
     return self;
+}
+
+- (void)setDrawsLegend:(BOOL)drawsLegend
+{
+	_drawsLegend = drawsLegend;
+	self.legendView.hidden = !_drawsLegend;
 }
 
 - (void)setAxisLabelColor:(UIColor *)axisLabelColor {
