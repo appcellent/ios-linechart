@@ -86,6 +86,7 @@ typedef LCLineChartDataItem *(^LCLineChartDataGetter)(NSUInteger item);
 
 @property BOOL smoothPlot; // draw a smoothed Bezier plot? Default: NO
 @property BOOL smoothXAxisOnly; // limit the smoothing to horizontal only. Default NO.
+@property BOOL drawsLegend; // Switch to turn off the legend. On by default.
 @property BOOL drawsDataPoints; // Switch to turn off circles on data points. On by default.
 @property BOOL drawsDataLines; // Switch to turn off lines connecting data points. On by default.
 @property BOOL drawsDataBorder; // Switch to turn off border around data points and lines. On by default

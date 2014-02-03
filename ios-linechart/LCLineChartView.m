@@ -167,10 +167,13 @@
     self.autoresizesSubviews = YES;
     self.contentMode = UIViewContentModeRedraw;
     
+	self.drawsLegend = YES;
     self.drawsDataPoints = YES;
     self.drawsDataLines  = YES;
 	self.drawsDataBorder = YES;
     self.smoothXAxisOnly = NO;
+	
+	self.legendView.hidden = !self.drawsLegend;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
