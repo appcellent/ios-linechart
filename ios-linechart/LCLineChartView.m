@@ -69,13 +69,17 @@
 	{
 		self.alpha = 0.0f;
 		
-		self.deltaLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 20, 86, 28)];
-		_deltaLabel.backgroundColor = [UIColor colorWithRed:0.663 green:0.788 blue:0.455 alpha:1.000];
+		self.deltaLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 186, 28)];
+		_deltaLabel.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.2f];
 		_deltaLabel.textColor = [UIColor whiteColor];
 		_deltaLabel.textAlignment = NSTextAlignmentCenter;
 		_deltaLabel.font = [UIFont systemFontOfSize:14.0f];
 		_deltaLabel.text = @"";
 		_deltaLabel.layer.cornerRadius = 7;
+		
+		self.positivePerformanceColor = [UIColor colorWithRed:0.663 green:0.788 blue:0.455 alpha:1.000];
+		self.negativePerformanceColor = [UIColor colorWithRed:0.7 green:0.0 blue:0.0 alpha:1.0];
+		
 		[self addSubview:_deltaLabel];
 	}
 	return self;
@@ -118,8 +122,45 @@
 			}
 			else
 			{
-				CGFloat delta = [_lastTouchInfo.closestDataItem.dataValue floatValue] / [_firstTouchInfo.closestDataItem.dataValue floatValue];
-				_deltaLabel.text = [NSString stringWithFormat:@"%.2f %%", delta*100];
+				CGFloat first = [_firstTouchInfo.closestDataItem.dataValue floatValue];
+				CGFloat last = [_lastTouchInfo.closestDataItem.dataValue floatValue];
+				
+				
+				
+				//1:	60 -> -30 => -150 %
+				//2:	-30 -> 60 => 300 %
+				// ((-3000/6000)*100)-100
+				
+				
+				
+				// G = -30
+				// W = 60 -(-30) = 90
+				// p = (90/-30)
+				
+				// G = 60
+				// W = -30 -(60) = -90
+				// p = (-90/60)
+				
+				
+				// (B1-A1)/ABS(A1)*100
+				// 1: (-30-60)/ABS(60)*100
+				// 2: (60+30)/ABS(-30)*100
+				// 2: (60-120)/ABS(120)*100
+				
+				// ((Preis aktuel/Einkaufspreis) -1)*100
+				// 1: ((-30/60) * -1)*100
+				
+				// =(end / start)^(1/n)-1
+				
+				
+//				CGFloat delta = [_lastTouchInfo.closestDataItem.dataValue floatValue] / [_firstTouchInfo.closestDataItem.dataValue floatValue];
+				CGFloat performance = (last - first)/ABS(first);
+				
+				//CGFloat delta = MIN(first, last) / MAX(first, last);
+
+				_deltaLabel.text = [NSString stringWithFormat:@"%.2f %%", performance*100];
+				
+				_deltaLabel.backgroundColor = (performance > 0.0f) ? _positivePerformanceColor : _negativePerformanceColor;
 			}
 		}
 	}
@@ -519,7 +560,10 @@
         CGRect r = touchInfo.currentPosView.frame;
         r.origin.x = closestPos.x + 3 - 1;
         touchInfo.currentPosView.frame = r;
+		[self bringSubviewToFront:touchInfo.infoView];
 		
+		[self.selection bringSubviewToFront:self.selection.deltaLabel];
+		[self bringSubviewToFront:self.selection];
 		[self.selection layoutSubviews];
 		
         touchInfo.xAxisLabel.text = closest.xLabel;

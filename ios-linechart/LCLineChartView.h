@@ -69,6 +69,9 @@ typedef LCLineChartDataItem *(^LCLineChartDataGetter)(NSUInteger item);
 @property (strong) LCTouchInfo* lastTouchInfo;
 @property (strong) UILabel* deltaLabel;
 
+@property (strong) UIColor* positivePerformanceColor UI_APPEARANCE_SELECTOR;
+@property (strong) UIColor* negativePerformanceColor UI_APPEARANCE_SELECTOR;
+
 @property (weak) id<LCTouchSelectionDelegate> delegate;
 
 - (void)setCornerRadius:(CGFloat)cornerRadius UI_APPEARANCE_SELECTOR;
