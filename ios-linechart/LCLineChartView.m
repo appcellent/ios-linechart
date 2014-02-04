@@ -387,8 +387,9 @@
 				
 				// add additional points to fill/close the curve
                 if (self.fillPlot) {
-					CGPathAddLineToPoint(filledPath, NULL, xStart + availableWidth, yStart + availableHeight);
-                    CGPathAddLineToPoint(filledPath, NULL, xStart, yStart + availableHeight);
+					CGRect boundingBox = CGPathGetBoundingBox(filledPath);
+					CGPathAddLineToPoint(filledPath, NULL, boundingBox.origin.x + boundingBox.size.width, yStart + availableHeight);
+                    CGPathAddLineToPoint(filledPath, NULL, boundingBox.origin.x, yStart + availableHeight);
                     CGContextSetFillColorWithColor(c, [[data.color colorWithAlphaComponent:0.2f] CGColor]);
 					CGContextAddPath(c, filledPath);
 					CGContextDrawPath(c, kCGPathFill);

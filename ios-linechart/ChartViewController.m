@@ -111,7 +111,7 @@
 	
 //	_chartViewUpper.fillPlot = YES;
 //	_chartViewUpper.drawsDataBorder = NO;
-	_chartViewUpper.drawsLegend = NO;
+//	_chartViewUpper.drawsLegend = NO;
 	
 //    chartView.drawsDataPoints = NO; // Uncomment to turn off circles at data points.
 //    chartView.drawsDataLines = NO; // Uncomment to turn off lines connecting data points.
