@@ -69,7 +69,7 @@
 	{
 		self.alpha = 0.0f;
 		
-		self.deltaLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 186, 28)];
+		self.deltaLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 86, 28)];
 		_deltaLabel.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.2f];
 		_deltaLabel.textColor = [UIColor whiteColor];
 		_deltaLabel.textAlignment = NSTextAlignmentCenter;
