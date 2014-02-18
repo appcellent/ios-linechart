@@ -124,42 +124,10 @@
 			{
 				CGFloat first = [_firstTouchInfo.closestDataItem.dataValue floatValue];
 				CGFloat last = [_lastTouchInfo.closestDataItem.dataValue floatValue];
-				
-				
-				
-				//1:	60 -> -30 => -150 %
-				//2:	-30 -> 60 => 300 %
-				// ((-3000/6000)*100)-100
-				
-				
-				
-				// G = -30
-				// W = 60 -(-30) = 90
-				// p = (90/-30)
-				
-				// G = 60
-				// W = -30 -(60) = -90
-				// p = (-90/60)
-				
-				
-				// (B1-A1)/ABS(A1)*100
-				// 1: (-30-60)/ABS(60)*100
-				// 2: (60+30)/ABS(-30)*100
-				// 2: (60-120)/ABS(120)*100
-				
-				// ((Preis aktuel/Einkaufspreis) -1)*100
-				// 1: ((-30/60) * -1)*100
-				
-				// =(end / start)^(1/n)-1
-				
-				
-//				CGFloat delta = [_lastTouchInfo.closestDataItem.dataValue floatValue] / [_firstTouchInfo.closestDataItem.dataValue floatValue];
+
 				CGFloat performance = (last - first)/ABS(first);
-				
-				//CGFloat delta = MIN(first, last) / MAX(first, last);
 
 				_deltaLabel.text = [NSString stringWithFormat:@"%.2f %%", performance*100];
-				
 				_deltaLabel.backgroundColor = (performance > 0.0f) ? _positivePerformanceColor : _negativePerformanceColor;
 			}
 		}
