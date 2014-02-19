@@ -264,8 +264,8 @@
         self.legendView.colors = colors;
         
         _data = data;
-        
-        [self setNeedsDisplay];
+		
+		[self setNeedsDisplay];
     }
 }
 
@@ -279,8 +279,8 @@
     CGFloat availableWidth = self.bounds.size.width - 2 * self.padding - self.yAxisLabelsWidth;
     CGFloat xStart = self.padding + self.yAxisLabelsWidth;
     CGFloat yStart = self.padding;
-    
-    static CGFloat dashedPattern[] = {4,2};
+	
+	static CGFloat dashedPattern[] = {4,2};
     
     // draw scale and horizontal lines
     CGFloat heightPerStep = self.ySteps == nil || [self.ySteps count] == 0 ? availableHeight : (availableHeight / ([self.ySteps count] - 1));
@@ -325,6 +325,9 @@
     
     CGContextRestoreGState(c);
 
+	
+	CGContextClipToRect(c, CGRectMake(xStart, yStart, availableWidth, availableHeight));
+    
 
     if (!self.drawsAnyData) {
         NSLog(@"You configured LineChartView to draw neither lines nor data points. No data will be visible. This is most likely not what you wanted. (But we aren't judging you, so here's your chart background.)");
@@ -336,7 +339,7 @@
         if (self.drawsDataLines) {
             float xRangeLen = data.xMax - data.xMin;
             if(xRangeLen == 0) xRangeLen = 1;
-            if(data.itemCount >= 2) {
+			if(data.itemCount >= 2) {
                 LCLineChartDataItem *datItem = data.getData(0);
                 CGMutablePathRef path = CGPathCreateMutable();
                 CGFloat prevX = xStart + round(((datItem.x - data.xMin) / xRangeLen) * availableWidth);
@@ -498,7 +501,7 @@
             }
         }
     }
-    
+	
 	NSString* keyForTouch = [NSString stringWithFormat:@"%p", touch];
 	LCTouchInfo* touchInfo = [_infoForTouch objectForKey:keyForTouch];
 	
