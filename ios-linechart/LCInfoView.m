@@ -31,6 +31,7 @@
         self.infoLabel.shadowColor = [UIColor blackColor];
         self.infoLabel.shadowOffset = CGSizeMake(0, -1);
         self.infoLabel.textAlignment = NSTextAlignmentCenter;
+		self.infoLabel.numberOfLines = 0;
         [self addSubview:self.infoLabel];
         
 		_cornerRadius = 7.0f;
@@ -84,11 +85,12 @@ void CGContextAddRoundedRectWithHookSimple(CGContextRef c, CGRect rect, CGFloat 
     // TODO: replace with new text APIs in iOS 7 only version
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    CGSize s = [self.infoLabel.text sizeWithFont:self.infoLabel.font];
+    //CGSize s = [self.infoLabel.text sizeWithFont:self.infoLabel.font];
+	CGSize s = [self.infoLabel.text sizeWithFont:self.infoLabel.font constrainedToSize:CGSizeMake(1000, 1000)];
 #pragma clang diagnostic pop
     s.height += 15;
     s.height += SHADOWSIZE;
-    
+	
     s.width += 2 * SHADOWSIZE + 7;
     s.width = MAX(s.width, HOOK_SIZE * 2 + 2 * SHADOWSIZE + 10);
     
