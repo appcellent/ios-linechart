@@ -26,6 +26,9 @@ typedef LCLineChartDataItem *(^LCLineChartDataGetter)(NSUInteger item);
 
 @property (readonly) NSNumber *dataValue; //
 
+@property (assign) BOOL showPositiveTrend;
+@property (assign) BOOL showNegativeTrend;
+
 + (LCLineChartDataItem *)dataItemWithX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel;
 + (LCLineChartDataItem *)dataItemWithX:(float)x y:(float)y xLabel:(NSString *)xLabel dataLabel:(NSString *)dataLabel andValue:(NSNumber*)value;
 

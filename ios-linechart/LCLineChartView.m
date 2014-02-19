@@ -436,6 +436,29 @@
                 }
 				if (_drawsDataBorder)
 					CGContextFillEllipseInRect(c, CGRectMake(xVal - 2, yVal - 2, 4, 4));
+				
+				
+				//
+				if (datItem.showPositiveTrend)
+				{
+					[[UIColor colorWithRed:0.000 green:0.502 blue:0.251 alpha:1.000] setFill];
+					CGContextMoveToPoint(c, xVal, yVal - 12);
+					CGContextAddLineToPoint(c, xVal - 4, yVal - 6);
+					CGContextAddLineToPoint(c, xVal + 4, yVal - 6);
+					CGContextAddLineToPoint(c, xVal, yVal - 12);
+					CGContextDrawPath(c, kCGPathFill);
+				}
+				
+				if (datItem.showNegativeTrend)
+				{
+					[[UIColor colorWithRed:0.502 green:0.000 blue:0.000 alpha:1.000] setFill];
+					CGContextMoveToPoint(c, xVal, yVal + 12);
+					CGContextAddLineToPoint(c, xVal - 4, yVal + 6);
+					CGContextAddLineToPoint(c, xVal + 4, yVal + 6);
+					CGContextAddLineToPoint(c, xVal, yVal + 12);
+					CGContextDrawPath(c, kCGPathFill);
+				}
+				
             } // for
         } // draw data points
     }
