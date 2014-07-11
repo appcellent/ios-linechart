@@ -104,6 +104,9 @@ typedef LCLineChartDataItem *(^LCLineChartDataGetter)(NSUInteger item);
 @property (strong) UIFont *scaleFont; /// Font in which scale markings are drawn. Defaults to [UIFont systemFontOfSize:10].
 @property (nonatomic,strong) UIColor *axisLabelColor;
 
+@property BOOL respectBeforeIntervall;
+@property BOOL respectAfterIntervall;
+
 - (void)showLegend:(BOOL)show animated:(BOOL)animated;
 
 @end

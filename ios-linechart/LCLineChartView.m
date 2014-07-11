@@ -486,8 +486,13 @@
     
     for(LCLineChartData *data in self.data) {
         float xRangeLen = data.xMax - data.xMin;
-        for(NSUInteger i = 0; i < data.itemCount; ++i) {
-            LCLineChartDataItem *datItem = data.getData(i);
+       
+        int iCount = _respectBeforeIntervall;
+        int maxCount = (_respectAfterIntervall) ?  data.itemCount - 1: data.itemCount;
+        
+        for(iCount; iCount < maxCount; ++iCount) {
+            LCLineChartDataItem *datItem = data.getData(iCount);
+            
             CGFloat xVal = round((xRangeLen == 0 ? 0.0 : ((datItem.x - data.xMin) / xRangeLen)) * availableWidth);
             CGFloat yVal = round((1.0 - (datItem.y - self.yMin) / yRangeLen) * availableHeight);
             
